@@ -1,0 +1,15 @@
+{
+  "name": "day-counter-bot",
+  "version": "1.0.0",
+  "description": "Twitch chat bot that posts random messages at a random 10-15 minute interval",
+  "main": "day-counter-bot.js",
+  "scripts": {
+    "start": "node day-counter-bot.js"
+  },
+  "dependencies": {
+    "tmi.js": "^1.8.5"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}
