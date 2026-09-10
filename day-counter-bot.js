@@ -114,6 +114,10 @@ function messageHaircut() {
 
 // ---------------- BOT ----------------
 const client = new tmi.Client({
+  connection: {
+    reconnect: true, // auto-reconnect if the connection to Twitch drops
+    secure: true,
+  },
   identity: {
     username: CONFIG.username,
     password: CONFIG.password,
@@ -122,12 +126,20 @@ const client = new tmi.Client({
 });
 
 let dayCount = 0;
+let schedulerStarted = false; // guard against starting a second timer loop on reconnect
 
 client.connect().catch(console.error);
 
+client.on('disconnected', (reason) => {
+  console.log(`Disconnected: ${reason}. tmi.js will try to reconnect automatically.`);
+});
+
 client.on('connected', () => {
   console.log(`Connected. Posting to #${CONFIG.channel} every 10-15 minutes.`);
-  scheduleNext(0); // send the first one immediately, then repeat
+  if (!schedulerStarted) {
+    schedulerStarted = true;
+    scheduleNext(0); // send the first one immediately, then repeat
+  }
 });
 
 function scheduleNext(delay) {
