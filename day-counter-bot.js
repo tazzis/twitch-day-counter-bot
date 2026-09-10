@@ -43,6 +43,8 @@
  *     logs clearly distinguish "platform stopped the container"
  *     from "the bot crashed"
  *   + explicit infinite tmi.js reconnect settings
+ *   + FIX: readyState is a method in tmi.js (calling it as a property
+ *     made the tick guard always skip — bot would post nothing)
  */
 
 const tmi = require('tmi.js');
@@ -226,8 +228,8 @@ function scheduleNext(delay) {
 }
 
 function tick() {
-  if (!client || client.readyState !== 'OPEN') {
-    console.log(`[${now()}] Skipped a tick — connection not open (state: ${client ? client.readyState : 'none'}).`);
+  if (!client || typeof client.readyState !== 'function' || client.readyState() !== 'OPEN') {
+    console.log(`[${now()}] Skipped a tick — connection not open yet.`);
     return;
   }
 
